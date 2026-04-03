@@ -1,0 +1,16 @@
+# Machine-specific configuration data
+# This file defines variables that can be used in templates
+
+# You can override these per-machine by creating .chezmoidata.toml in the source directory
+# or by using machine-specific suffixes like .chezmoidata_darwin.toml
+
+# Default values
+[default]
+shell = "fish"
+package_manager = "brew"
+work_machine = false
+
+# Machine type detection will use chezmoi's built-in variables:
+# {{ .chezmoi.os }} - "darwin" or "linux"
+# {{ .chezmoi.hostname }} - machine hostname
+# {{ .chezmoi.osRelease.id }} - linux distribution ID

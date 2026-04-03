@@ -1,0 +1,9 @@
+#!/bin/bash
+# Set up latest Node.js via mise
+{{- if not (or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname)) }}
+
+if command -v mise &> /dev/null; then
+    mise install node@latest
+    mise use --global node@latest
+fi
+{{- end }}

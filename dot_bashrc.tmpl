@@ -1,0 +1,33 @@
+{{- /* Only create .bashrc for Raspberry PIs (bash shell machines) */ -}}
+{{- if and (eq .chezmoi.os "linux") (or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname)) -}}
+# Bash configuration for Raspberry PIs
+
+# Basic settings
+export EDITOR=nvim
+export VISUAL=$EDITOR
+export PATH="$HOME/.local/bin:$PATH"
+
+# Aliases
+alias ll='ls -lah'
+alias la='ls -A'
+alias l='ls -CF'
+alias update='sudo apt update && sudo apt upgrade -y'
+alias vim='nvim'
+alias vi='nvim'
+
+# Color support
+if [ -x /usr/bin/dircolors ]; then
+    alias ls='ls --color=auto'
+    alias grep='grep --color=auto'
+fi
+
+# Custom prompt
+PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+
+# Load custom bash configs
+if [ -d ~/.bashrc.d ]; then
+    for file in ~/.bashrc.d/*.sh; do
+        [ -r "$file" ] && source "$file"
+    done
+fi
+{{- end }}

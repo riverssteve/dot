@@ -1,0 +1,21 @@
+{{- if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (contains "fedora" .chezmoi.osRelease.idLike)) }}
+#!/usr/bin/env bash
+# Install Homebrew packages from Brewfile
+
+set -e
+
+if ! command -v brew &> /dev/null; then
+    echo "Homebrew not found. Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+if [ -f ~/Brewfile ]; then
+    echo "Installing packages from ~/Brewfile..."
+    brew bundle --file=~/Brewfile
+    echo "✓ Homebrew packages installed successfully!"
+else
+    echo "Error: ~/Brewfile not found"
+    exit 1
+fi
+{{- end }}

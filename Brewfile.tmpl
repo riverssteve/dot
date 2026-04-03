@@ -1,0 +1,39 @@
+{{- if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (contains "fedora" .chezmoi.osRelease.idLike)) }}
+# Homebrew Bundle file for Bazzite/Fedora (CLI tools only, no casks)
+# Install with: brew bundle --file=~/Brewfile
+
+# CLI tools
+brew "git"
+brew "neovim"
+brew "chezmoi"
+brew "fish"
+brew "htop"
+brew "jq"
+brew "ripgrep"
+brew "fzf"
+brew "fd"
+brew "bat"
+brew "eza"
+brew "zoxide"
+brew "lazygit"
+brew "gh"
+brew "starship"
+brew "tldr"
+brew "tree"
+brew "wget"
+brew "curl"
+
+# Development tools
+brew "mise"
+brew "python@3.12"
+brew "go"
+# brew "rust"  # Uncomment if needed
+
+# Additional tools (uncomment as needed)
+# brew "tmux"
+# brew "direnv"
+# brew "docker"
+# brew "kubectl"
+# brew "helm"
+# brew "terraform"
+{{- end }}

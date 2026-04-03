@@ -1,0 +1,45 @@
+# Fish shell configuration
+# This file is templated and adapts to different machines
+
+# Common fish configuration for all machines
+set -gx EDITOR nvim
+set -gx VISUAL $EDITOR
+
+# Add local bin to PATH
+fish_add_path ~/.local/bin
+
+# mise version manager (node, python, etc.)
+if command -q mise
+    mise activate fish | source
+end
+
+{{- if eq .chezmoi.os "darwin" }}
+# macOS-specific configuration
+set -gx HOMEBREW_PREFIX /opt/homebrew
+fish_add_path /opt/homebrew/bin
+
+# macOS aliases
+alias ls 'ls -G'
+{{- end }}
+
+{{- if eq .chezmoi.os "linux" }}
+{{- /* Skip if this is a Raspberry PI (uses bash) */ -}}
+{{- if not (or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname)) -}}
+# Linux-specific configuration
+alias ls 'ls --color=auto'
+alias ll 'ls -lah'
+alias vim 'nvim'
+alias vi 'nvim'
+
+{{- if or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (contains "fedora" .chezmoi.osRelease.idLike) }}
+# Bazzite/Fedora Atomic specific
+alias update-system 'rpm-ostree upgrade'
+alias installed-packages 'rpm-ostree status'
+{{- end }}
+{{- end }}
+{{- end }}
+
+# Load machine-specific configurations
+for file in ~/.config/fish/conf.d/*.fish
+    source $file
+end

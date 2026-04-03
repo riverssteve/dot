@@ -1,0 +1,26 @@
+{{- if and (eq .chezmoi.os "linux") (or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname)) }}
+# Raspberry PI specific aliases and functions
+
+# System monitoring
+alias temp='vcgencmd measure_temp'
+alias cpu='cat /proc/cpuinfo | grep "cpu MHz"'
+
+# GPIO helpers (if needed)
+# alias gpio-status='gpio readall'
+
+# Update and cleanup
+alias update-all='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
+
+# Docker shortcuts (if Docker is installed)
+if command -v docker &> /dev/null; then
+    alias dps='docker ps'
+    alias dcu='docker compose up -d'
+    alias dcd='docker compose down'
+fi
+
+# Docker shortcuts (if git is installed)
+if command -v docker &> /dev/null; then
+    alias g='git'
+    alias gr='git rebase "$(git merge-base main HEAD)" --interactive --autosquash --autostash'
+fi
+{{- end }}

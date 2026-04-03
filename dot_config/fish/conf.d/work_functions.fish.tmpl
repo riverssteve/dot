@@ -1,0 +1,17 @@
+{{- if eq .chezmoi.os "darwin" }}
+# Work-specific fish functions and aliases (macOS only)
+# Customize these for your work environment
+
+function work-vpn
+    echo "Connecting to work VPN..."
+    # Add your VPN connection command here
+end
+
+function work-ssh
+    ssh user@work-server.company.com
+end
+
+# Work-specific aliases
+alias work-deploy 'echo "Deploying to production..."'
+alias work-logs 'tail -f /var/log/work-app.log'
+{{- end }}

@@ -1,0 +1,28 @@
+{{- if eq .chezmoi.os "linux" }}
+{{- /* Skip if this is a Raspberry PI */ -}}
+{{- if not (or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname)) -}}
+# Linux-specific fish configuration
+
+# Flatpak support
+if test -d /var/lib/flatpak/exports/bin
+    fish_add_path /var/lib/flatpak/exports/bin
+end
+
+# Distrobox aliases
+if command -v distrobox &> /dev/null
+    alias ubuntu 'distrobox enter ubuntu'
+    alias arch 'distrobox enter arch'
+end
+
+{{- if or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (contains "fedora" .chezmoi.osRelease.idLike) }}
+# Bazzite/Fedora Atomic-specific functions
+function layer-package
+    rpm-ostree install $argv && systemctl reboot
+end
+
+function remove-package
+    rpm-ostree uninstall $argv && systemctl reboot
+end
+{{- end }}
+{{- end }}
+{{- end }}

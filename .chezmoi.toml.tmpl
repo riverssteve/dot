@@ -1,0 +1,28 @@
+# Chezmoi configuration file
+# This template generates the actual .chezmoi.toml based on the machine
+
+{{- $isWork := false -}}
+{{- $shell := "fish" -}}
+{{- $packageManager := "brew" -}}
+
+{{- if eq .chezmoi.os "darwin" -}}
+  {{- $isWork = true -}}
+  {{- $shell = "fish" -}}
+  {{- $packageManager = "brew" -}}
+{{- else if eq .chezmoi.os "linux" -}}
+  {{- if or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname) -}}
+    {{- $shell = "bash" -}}
+    {{- $packageManager = "apt" -}}
+  {{- else -}}
+    {{- $shell = "fish" -}}
+    {{- if or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (contains "fedora" .chezmoi.osRelease.idLike) -}}
+      {{- $packageManager = "rpm-ostree" -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+[data]
+isWork = {{ $isWork }}
+shell = {{ $shell | quote }}
+packageManager = {{ $packageManager | quote }}
+email = "{{ .chezmoi.username }}@{{ if $isWork }}company.com{{ else }}personal.com{{ end }}"

@@ -1,0 +1,12 @@
+{{- if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (contains "fedora" .chezmoi.osRelease.idLike)) }}
+# List of packages to layer onto the base Bazzite system using rpm-ostree
+# Install with: rpm-ostree install $(cat ~/.local/share/chezmoi/rpm-ostree-packages.txt | grep -v '^#' | xargs)
+#
+# Note: Only add packages here that MUST be layered (system-level requirements)
+# Prefer Flatpak for GUI apps and Homebrew for CLI tools
+#
+# Example packages:
+# vim
+# htop
+# distrobox
+{{- end }}

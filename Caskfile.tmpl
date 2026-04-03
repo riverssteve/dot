@@ -1,0 +1,77 @@
+{{- if eq .chezmoi.os "darwin" }}
+# Homebrew Bundle file for macOS
+# Install with: brew bundle --file=~/Caskfile
+
+cask_args appdir: '/Applications'
+
+# Taps
+tap "homebrew/cask"
+tap "homebrew/bundle"
+tap "homebrew/core"
+
+# CLI tools
+brew "bat"
+brew "bash"
+brew "direnv"
+brew "eza"
+brew "fd"
+brew "fzf"
+brew "fish"
+brew "gawk"
+brew "gcc"
+brew "gh"
+brew "git"
+brew "git-delta"
+brew "jq"
+brew "git-absorb"
+brew "glib"
+brew "mise"
+brew "neovim"
+brew "prettyping"
+brew "rename"
+brew "ripgrep"
+brew "shfmt"
+brew "starship"
+brew "tree"
+brew "watch"
+brew "wdiff"
+brew "wget"
+brew "zellij"
+brew "zoxide"
+brew "zsh"
+brew "uv"
+
+# GPG
+brew "gnupg"
+brew "pinentry"
+brew "pinentry-mac"
+
+# Python
+brew "pyenv"
+brew "pyenv-virtualenv"
+
+# Work
+brew "kubectl"
+brew "k9s"
+
+# GUI Applications
+cask "alacritty"
+cask "arc"
+cask "camo-studio"
+cask "discord"
+cask "fantastical"
+cask "firefox"
+cask "fork"
+cask "insomnia"
+cask "jordanbaird-ice"
+cask "karabiner-elements"
+cask "kitty"
+cask "mac-mouse-fix"
+cask "proxyman"
+cask "raycast"
+cask "rectangle"
+cask "spotify"
+cask "tower"
+cask "viscosity"
+cask "visual-studio-code"
+{{- end }}

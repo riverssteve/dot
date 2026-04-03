@@ -1,0 +1,43 @@
+{{- if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (contains "fedora" .chezmoi.osRelease.idLike)) }}
+#!/usr/bin/env bash
+# Layer RPM packages onto the system using rpm-ostree
+
+set -e
+
+PACKAGE_FILE="$HOME/.local/share/chezmoi/rpm-ostree-packages.txt"
+
+if [ ! -f "$PACKAGE_FILE" ]; then
+    echo "Error: $PACKAGE_FILE not found"
+    exit 1
+fi
+
+# Read packages, filter out comments and empty lines
+PACKAGES=$(grep -v '^#' "$PACKAGE_FILE" | grep -v '^[[:space:]]*$' | xargs)
+
+if [ -z "$PACKAGES" ]; then
+    echo "No packages to layer (all lines are commented or empty)"
+    exit 0
+fi
+
+echo "Layering packages onto the system:"
+echo "$PACKAGES" | tr ' ' '\n' | sed 's/^/  - /'
+echo ""
+echo "This will require a reboot. Continue? (y/N)"
+read -r response
+
+if [[ "$response" =~ ^[Yy]$ ]]; then
+    rpm-ostree install $PACKAGES
+    echo ""
+    echo "✓ Packages staged successfully!"
+    echo "Reboot now? (y/N)"
+    read -r reboot_response
+    if [[ "$reboot_response" =~ ^[Yy]$ ]]; then
+        systemctl reboot
+    else
+        echo "Remember to reboot to apply changes: systemctl reboot"
+    fi
+else
+    echo "Cancelled"
+    exit 1
+fi
+{{- end }}
