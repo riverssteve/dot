@@ -1,0 +1,21 @@
+{{- if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (contains "fedora" .chezmoi.osRelease.idLike)) }}
+#!/bin/bash
+set -e
+
+FISH_PATH="$(which fish 2>/dev/null || echo /home/linuxbrew/.linuxbrew/bin/fish)"
+
+if [ ! -x "$FISH_PATH" ]; then
+    echo "fish not found at $FISH_PATH, skipping shell setup"
+    exit 0
+fi
+
+if ! grep -qF "$FISH_PATH" /etc/shells; then
+    echo "Adding $FISH_PATH to /etc/shells..."
+    echo "$FISH_PATH" | sudo tee -a /etc/shells
+fi
+
+if [ "$SHELL" != "$FISH_PATH" ]; then
+    echo "Setting default shell to $FISH_PATH..."
+    chsh -s "$FISH_PATH"
+fi
+{{- end }}
