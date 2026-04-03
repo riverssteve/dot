@@ -16,6 +16,6 @@ fi
 
 if [ "$SHELL" != "$FISH_PATH" ]; then
     echo "Setting default shell to $FISH_PATH..."
-    chsh -s "$FISH_PATH"
+    sudo usermod -s "$FISH_PATH" "$USER"
 fi
 {{- end }}
