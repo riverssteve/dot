@@ -1,45 +1,72 @@
-# Fish shell configuration
-# This file is templated and adapts to different machines
+if status is-interactive
+    if command -v atuin >/dev/null
+        atuin init fish | source
+    end
 
-# Common fish configuration for all machines
-set -gx EDITOR nvim
-set -gx VISUAL $EDITOR
+    if command -v starship >/dev/null
+        starship init fish | source
+    end
 
-# Add local bin to PATH
-fish_add_path ~/.local/bin
+    if command -v uv >/dev/null
+        uv generate-shell-completion fish | source
+    end
+end
 
-# mise version manager (node, python, etc.)
-if command -q mise
+# mise version manager
+if command -v mise >/dev/null
     mise activate fish | source
 end
 
+# Homebrew
+if test -d /opt/homebrew/
+    /opt/homebrew/bin/brew shellenv | source
+end
+
+# PATH
+fish_add_path ~/.local/bin
+fish_add_path ~/.cargo/bin
+
 {{- if eq .chezmoi.os "darwin" }}
-# macOS-specific configuration
-set -gx HOMEBREW_PREFIX /opt/homebrew
-fish_add_path /opt/homebrew/bin
-
-# macOS aliases
-alias ls 'ls -G'
+fish_add_path /opt/homebrew/opt/coreutils/libexec/gnubin
+fish_add_path /opt/homebrew/opt/fzf/bin
+fish_add_path /opt/homebrew/opt/binutils/bin
 {{- end }}
 
-{{- if eq .chezmoi.os "linux" }}
-{{- /* Skip if this is a Raspberry PI (uses bash) */ -}}
-{{- if not (or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname)) -}}
-# Linux-specific configuration
-alias ls 'ls --color=auto'
-alias ll 'ls -lah'
-alias vim 'nvim'
-alias vi 'nvim'
+# Environment
+set -gx EDITOR nvim
+set -gx VISUAL nvim
+set -gx PROJECTS "$HOME/code"
+set -U fish_greeting ""
 
-{{- if or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (contains "fedora" .chezmoi.osRelease.idLike) }}
-# Bazzite/Fedora Atomic specific
-alias update-system 'rpm-ostree upgrade'
-alias installed-packages 'rpm-ostree status'
-{{- end }}
-{{- end }}
-{{- end }}
+# FZF theme
+set -gx FZF_DEFAULT_OPTS $FZF_DEFAULT_OPTS \
+    --highlight-line \
+    --info=inline-right \
+    --ansi \
+    --layout=reverse \
+    --border=none \
+    --color=bg+:#283457 \
+    --color=bg:#16161e \
+    --color=border:#27a1b9 \
+    --color=fg:#c0caf5 \
+    --color=gutter:#16161e \
+    --color=header:#ff9e64 \
+    --color=hl+:#2ac3de \
+    --color=hl:#2ac3de \
+    --color=info:#545c7e \
+    --color=marker:#ff007c \
+    --color=pointer:#ff007c \
+    --color=prompt:#2ac3de \
+    --color=query:#c0caf5:regular \
+    --color=scrollbar:#27a1b9 \
+    --color=separator:#ff9e64 \
+    --color=spinner:#ff007c
 
-# Load machine-specific configurations
-for file in ~/.config/fish/conf.d/*.fish
-    source $file
+# Local overrides
+if test -f $HOME/.config/fish/secrets.fish
+    source $HOME/.config/fish/secrets.fish
+end
+
+if test -f $HOME/.config/fish/extras.fish
+    source $HOME/.config/fish/extras.fish
 end
