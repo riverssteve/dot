@@ -8,7 +8,7 @@ M.copy_relative_path = function()
   vim.fn.setreg("+", relative_path)
 
   -- Optional: Show a notification to user
-  vim.notify("Copied path: " .. relative_path, vim.log.levels.INFO)
+  Snacks.notifier.notify("Copied path: " .. relative_path, vim.log.levels.INFO)
 end
 
 M.copy_dot_path_to_file = function(custom_root)
@@ -37,6 +37,12 @@ M.copy_dot_path_to_file = function(custom_root)
 
   -- Copy to clipboard
   vim.fn.setreg("+", path)
+end
+
+M.show_relative_path = function()
+  -- Get the relative path of the current buffer
+  local relative_path = vim.fn.fnamemodify(vim.fn.expand("%"), ":.")
+  Snacks.notifier.notify(relative_path, "info", { timeout = 10000 })
 end
 
 return M

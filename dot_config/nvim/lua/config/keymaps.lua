@@ -7,21 +7,39 @@ vim.keymap.set({ "n", "x" }, "gh", "<s-h>", { desc = "Move cursor to top of wind
 vim.keymap.set({ "n", "x" }, "gm", "<s-m>", { desc = "Move cursor to center of window" })
 vim.keymap.set({ "n", "x" }, "gl", "<s-l>", { desc = "Move cursor to bottom of window" })
 
--- Copy the current filename to a buffer
-vim.api.nvim_set_keymap(
-  "n",
-  "<leader>cf",
-  "<cmd>let @+=@%<CR>",
-  { desc = "Copy current filename to buffer", noremap = true, silent = true }
-)
+local wk = require("which-key")
+wk.add({
+  -- Define a top-level group called AI
+  -- the code companion key bindings are stored in the plugin configuration
+  { "<leader>a", group = "AI", icon = "󱚦" },
 
--- Copy relative file path
-vim.keymap.set("n", "<leader>cp", require("config.functions").copy_relative_path, { desc = "Copy relative file path" })
-
--- Set up the key mapping for default behavior (using 'src')
-vim.api.nvim_set_keymap(
-  "n",
-  "<leader>cd",
-  ":lua require('config.functions').copy_dot_path_to_file()<CR>",
-  { desc = "copy dot path from src", noremap = true, silent = true }
-)
+  -- define a group inside code actions for file actions
+  { "<leader>cc", group = "File Operations" },
+  -- inside this group put file operations
+  {
+    "<leader>ccc",
+    function()
+      local filepath = vim.fn.expand("%:.")
+      vim.fn.setreg("+", filepath)
+      Snacks.notifier.notify("Copied: " .. filepath, "info", { timeout = 1000 })
+    end,
+    desc = "Copy relative path",
+  },
+  {
+    "<leader>ccs",
+    function()
+      local filepath = vim.fn.expand("%:.")
+      Snacks.notifier.notify("File: " .. filepath, vim.log.levels.INFO, { timeout = 10000 })
+    end,
+    desc = "Show relative path",
+  },
+  {
+    "<leader>ccd",
+    function()
+      local filepath = vim.fn.expand("%:.:r"):gsub("/", ".")
+      vim.fn.setreg("+", filepath)
+      Snacks.notifier.notify("Copied: " .. filepath, "info", { timeout = 1000 })
+    end,
+    desc = "Copy dot-formatted path",
+  },
+})

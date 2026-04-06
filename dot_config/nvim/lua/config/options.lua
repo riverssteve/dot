@@ -11,8 +11,13 @@
 --   $ pip install pynvim
 --
 -- And then in neovim run :checkhealth and ensure that the following is selected.
-vim.g.python3_host_prog = "/Users/steve.rivers/.virtualenvs/neovim/bin/python3"
+vim.g.python3_host_prog = "/Users/steve.rivers/.local/share/uv/virtualenvs/neovim/bin/python3"
 vim.g.node_host_prog = "/opt/homebrew/bin/node"
+
+vim.g.lazyvim_python_lsp = "ty"
 
 -- https://stackoverflow.com/questions/53835289/iterm2-cursor-scrolling-with-mouse-enabled-in-vim
 -- Here so that I can see this when I inevitably wonder why scrolling inside neovim isn't working :)
+
+-- Sync clipboard with neovim
+vim.o.clipboard = "unnamedplus"
