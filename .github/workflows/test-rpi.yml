@@ -1,0 +1,27 @@
+name: Test on Raspberry Pi Debian
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  chezmoi-dry-run:
+    name: chezmoi dry-run (RPi-like)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set RPi-like hostname
+        run: sudo hostname pi-test
+
+      - name: Install chezmoi
+        run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
+
+      - name: Dry-run chezmoi apply
+        run: |
+          cp -r "$GITHUB_WORKSPACE" /tmp/dot
+          rm -rf /tmp/dot/.git
+          chezmoi apply --source=/tmp/dot --dry-run --verbose
