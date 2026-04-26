@@ -14,7 +14,7 @@ if command -v distrobox &> /dev/null
     alias arch 'distrobox enter arch'
 end
 
-{{- if or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (contains "fedora" .chezmoi.osRelease.idLike) }}
+{{- if or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") }}
 # Bazzite/Fedora Atomic-specific functions
 function layer-package
     rpm-ostree install $argv && systemctl reboot

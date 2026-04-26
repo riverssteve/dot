@@ -1,4 +1,4 @@
-{{- if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (contains "fedora" .chezmoi.osRelease.idLike)) }}
+{{- if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora")) }}
 # Homebrew Bundle file for Bazzite/Fedora (CLI tools only, no casks)
 # Install with: brew bundle --file=~/Brewfile
 
