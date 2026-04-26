@@ -8,13 +8,6 @@ README.md
 .config/fish/conf.d/work_*.fish
 {{ end }}
 
-# Ignore fish configs on Raspberry PIs (they use bash)
-{{ if eq .chezmoi.os "linux" }}
-{{ if or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname) }}
-.config/fish/
-{{ end }}
-{{ end }}
-
 # Ignore macOS-specific files on Linux
 {{ if eq .chezmoi.os "linux" }}
 Caskfile

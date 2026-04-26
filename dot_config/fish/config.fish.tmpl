@@ -10,6 +10,10 @@ if status is-interactive
     if command -v uv >/dev/null
         uv generate-shell-completion fish | source
     end
+
+    if command -v zoxide >/dev/null
+        zoxide init fish | source
+    end
 end
 
 # mise version manager
