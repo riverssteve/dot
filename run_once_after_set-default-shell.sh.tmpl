@@ -1,6 +1,8 @@
-{{- if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname)) -}}
+{{- if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (eq .chezmoi.osRelease.id "debian") (contains "fedora" (.chezmoi.osRelease.idLike | default "")) (contains "debian" (.chezmoi.osRelease.idLike | default ""))) -}}
 #!/bin/bash
 set -e
+
+if [ "$(id -u)" = "0" ]; then sudo() { "$@"; }; fi
 
 {{ if or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") -}}
 FISH_PATH="$(which fish 2>/dev/null || echo /home/linuxbrew/.linuxbrew/bin/fish)"
@@ -20,6 +22,6 @@ fi
 
 if [ "$SHELL" != "$FISH_PATH" ]; then
     echo "Setting default shell to $FISH_PATH..."
-    sudo usermod -s "$FISH_PATH" "$USER"
+    sudo usermod -s "$FISH_PATH" "$(id -un)"
 fi
 {{- end }}

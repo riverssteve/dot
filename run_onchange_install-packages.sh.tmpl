@@ -1,0 +1,19 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -e
+brew bundle --file={{ .chezmoi.homeDir }}/Caskfile
+{{ else if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora")) -}}
+#!/bin/bash
+set -e
+brew bundle --file={{ .chezmoi.homeDir }}/Brewfile
+{{ else if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "debian") (contains "debian" (.chezmoi.osRelease.idLike | default ""))) -}}
+#!/bin/bash
+set -e
+
+if [ "$(id -u)" = "0" ]; then sudo() { "$@"; }; fi
+
+sudo apt-get update && sudo apt-get install --no-install-recommends -y \
+  fish \
+  fzf \
+  direnv
+{{ end -}}
