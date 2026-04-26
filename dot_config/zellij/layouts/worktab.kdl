@@ -1,0 +1,35 @@
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        children
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+    }
+
+    pane split_direction="vertical" {
+        pane size="50%" split_direction="horizonal" {
+            pane {
+                command "fish"
+                args "-c" "direnv exec . nvim"
+                name "editor"
+                focus true
+            }
+            pane stacked=true {
+                pane {
+                    name "server"
+                }
+                pane {
+                    name "scratch"
+                }
+            }
+        }
+        pane {
+            command "fish"
+            args "-c" "direnv exec . claude"
+            name "intern"
+        }
+    }
+}
