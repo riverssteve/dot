@@ -1,4 +1,4 @@
-{{- if or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname) }}
+{{- if or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname) -}}
 #!/bin/bash
 cat <<'EOF'
 

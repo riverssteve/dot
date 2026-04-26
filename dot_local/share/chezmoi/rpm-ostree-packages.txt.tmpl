@@ -1,4 +1,4 @@
-{{- if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (contains "fedora" .chezmoi.osRelease.idLike)) }}
+{{- if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora")) }}
 # List of packages to layer onto the base Bazzite system using rpm-ostree
 # Install with: rpm-ostree install $(cat ~/.local/share/chezmoi/rpm-ostree-packages.txt | grep -v '^#' | xargs)
 #

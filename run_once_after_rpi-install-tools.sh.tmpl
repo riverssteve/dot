@@ -1,4 +1,4 @@
-{{- if and (eq .chezmoi.os "linux") (or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname)) }}
+{{- if and (eq .chezmoi.os "linux") (or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname)) -}}
 #!/bin/bash
 set -e
 

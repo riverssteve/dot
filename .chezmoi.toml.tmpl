@@ -15,7 +15,7 @@
     {{- $packageManager = "apt" -}}
   {{- else -}}
     {{- $shell = "fish" -}}
-    {{- if or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") (contains "fedora" .chezmoi.osRelease.idLike) -}}
+    {{- if or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora") -}}
       {{- $packageManager = "rpm-ostree" -}}
     {{- end -}}
   {{- end -}}
