@@ -1,5 +1,6 @@
 # Files to ignore across all machines
 README.md
+test.sh
 .git/
 .claude/
 
