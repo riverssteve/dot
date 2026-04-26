@@ -28,4 +28,4 @@ jobs:
           cp -r "$GITHUB_WORKSPACE" /tmp/dot
           rm -rf /tmp/dot/.git
           chezmoi init --source=/tmp/dot
-          chezmoi apply --source=/tmp/dot --dry-run --verbose
+          chezmoi apply --source=/tmp/dot
