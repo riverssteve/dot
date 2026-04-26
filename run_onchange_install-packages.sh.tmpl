@@ -2,10 +2,12 @@
 #!/bin/bash
 set -e
 brew bundle --file={{ .chezmoi.homeDir }}/Caskfile
+mise install node@latest && mise use --global node@latest || echo "Node install failed — run 'mise install node@latest' manually after setup"
 {{ else if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora")) -}}
 #!/bin/bash
 set -e
 brew bundle --file={{ .chezmoi.homeDir }}/Brewfile
+mise install node@latest && mise use --global node@latest || echo "Node install failed — run 'mise install node@latest' manually after setup"
 {{ else if and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "debian") (contains "debian" (.chezmoi.osRelease.idLike | default ""))) -}}
 #!/bin/bash
 set -e
@@ -16,4 +18,8 @@ sudo apt-get update && sudo apt-get install --no-install-recommends -y \
   fish \
   fzf \
   direnv
+
+curl -q https://mise.run | sh
+export PATH="$HOME/.local/bin:$PATH"
+mise install node@latest && mise use --global node@latest || echo "Node install failed — run 'mise install node@latest' manually after setup"
 {{ end -}}
