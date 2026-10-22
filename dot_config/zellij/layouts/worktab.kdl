@@ -10,7 +10,7 @@ layout {
     }
 
     pane split_direction="vertical" {
-        pane size="50%" split_direction="horizonal" {
+        pane size="50%" split_direction="horizontal" {
             pane {
                 command "fish"
                 args "-c" "direnv exec . nvim"

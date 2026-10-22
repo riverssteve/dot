@@ -1,0 +1,78 @@
+{{ if or (eq .chezmoi.os "darwin") (and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora"))) -}}
+#!/bin/bash
+set -euo pipefail
+# Package manifests: {{ include "Caskfile.tmpl" | sha256sum }} {{ include "Brewfile.tmpl" | sha256sum }}
+{{ template "brew-setup.sh" . }}
+{{ if eq .chezmoi.os "darwin" -}}
+brew bundle --file="$HOME/Caskfile"
+{{ else -}}
+brew bundle --file="$HOME/Brewfile"
+{{ end -}}
+mise use --global node@latest
+{{ else if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "debian") -}}
+#!/bin/bash
+set -euo pipefail
+
+if [ "$(id -u)" = "0" ]; then sudo() { "$@"; }; fi
+
+# Debian packages provide the shell and build/runtime dependencies. mise
+# supplies current versions of CLI tools that are old or absent in stable.
+sudo apt-get update && sudo apt-get install --no-install-recommends -y \
+  bash-completion \
+  bat \
+  ca-certificates \
+  curl \
+  fd-find \
+  ffmpeg \
+  gh \
+  git \
+  git-lfs \
+  gnupg \
+  jq \
+  less \
+  build-essential \
+  pkg-config \
+  pinentry-curses \
+  python3 \
+  python3-venv \
+  ripgrep \
+  tree \
+  unzip \
+  wget \
+  fish \
+  fzf \
+  direnv
+
+# Docker
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+sudo tee /etc/apt/sources.list.d/docker.sources > /dev/null <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/debian
+Suites: $(. /etc/os-release && echo "$VERSION_CODENAME")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+sudo apt-get update && sudo apt-get install --no-install-recommends -y \
+  docker-ce \
+  docker-ce-cli \
+  containerd.io \
+  docker-buildx-plugin \
+  docker-compose-plugin
+
+export PATH="$HOME/.local/bin:$PATH"
+if ! command -v mise >/dev/null 2>&1; then
+    installer=$(mktemp)
+    curl -fsSL https://mise.run -o "$installer"
+    sh "$installer"
+    rm -f "$installer"
+fi
+mise use --global node@latest neovim@latest eza@latest fzf@latest zoxide@latest \
+    starship@latest atuin@latest zellij@latest uv@latest lazygit@latest lazydocker@latest
+{{ else -}}
+#!/bin/sh
+echo "No automatic package installer for this operating system."
+{{ end -}}

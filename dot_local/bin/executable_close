@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Backwards-compatible shortcut for the named/picker-based tab helper.
+exec zellij-close-tab "$@"

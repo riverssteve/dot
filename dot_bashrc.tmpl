@@ -1,33 +1,14 @@
-{{- /* Only create .bashrc for Raspberry PIs (bash shell machines) */ -}}
-{{- if and (eq .chezmoi.os "linux") (or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname)) -}}
-# Bash configuration for Raspberry PIs
+# Interactive Bash configuration; safe to source from a login shell too.
+case $- in *i*) ;; *) return ;; esac
 
-# Basic settings
-export EDITOR=nvim
-export VISUAL=$EDITOR
-export PATH="$HOME/.local/bin:$PATH"
+for file in "$HOME"/.config/bash/*.bash "$HOME"/.bashrc.d/*.sh; do
+    # shellcheck disable=SC1090
+    [ ! -r "$file" ] || . "$file"
+done
+unset file
 
-# Aliases
-alias ll='ls -lah'
-alias la='ls -A'
-alias l='ls -CF'
-alias update='sudo apt update && sudo apt upgrade -y'
-alias vim='nvim'
-alias vi='nvim'
-
-# Color support
-if [ -x /usr/bin/dircolors ]; then
-    alias ls='ls --color=auto'
-    alias grep='grep --color=auto'
-fi
-
-# Custom prompt
-PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-
-# Load custom bash configs
-if [ -d ~/.bashrc.d ]; then
-    for file in ~/.bashrc.d/*.sh; do
-        [ -r "$file" ] && source "$file"
-    done
-fi
-{{- end }}
+for file in "$HOME"/.config/bash/secrets.local "$HOME"/.config/bash/extras.local; do
+    # shellcheck disable=SC1090
+    [ ! -r "$file" ] || . "$file"
+done
+unset file

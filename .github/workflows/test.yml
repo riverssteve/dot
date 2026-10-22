@@ -1,0 +1,36 @@
+name: Validate dotfiles
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Linux validation tools
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fish shellcheck
+
+      - name: Install macOS validation tools
+        if: runner.os == 'macOS'
+        run: brew install fish shellcheck
+
+      - name: Install chezmoi
+        run: |
+          mkdir -p "$RUNNER_TEMP/bin"
+          curl -fsLS https://get.chezmoi.io -o "$RUNNER_TEMP/install-chezmoi.sh"
+          sh "$RUNNER_TEMP/install-chezmoi.sh" -b "$RUNNER_TEMP/bin"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
+      - name: Render and apply all platform configurations to temporary homes
+        run: ./test.sh

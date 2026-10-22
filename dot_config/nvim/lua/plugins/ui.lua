@@ -22,16 +22,21 @@ return {
             exclude = {
               "*.pyc",
               ".git",
+              ".worktrees",
               ".mypy_cache",
               ".pytest_cache",
               "__pycache__",
               "node_modules",
             },
           },
+          grep = {
+            exclude = { ".worktrees" },
+          },
           explorer = {
             replace_netrw = true,
             trash = true,
             hidden = true,
+            exclude = { ".worktrees" },
           },
         },
       },

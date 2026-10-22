@@ -1,0 +1,8 @@
+[user]
+	name = Steve Rivers
+	email = steve.rivers@kraken.tech
+
+[url "ssh://git@github.com/octoenergy/"]
+	insteadof = https://github.com/octoenergy/
+
+# vim: ft=gitignore

@@ -18,8 +18,8 @@ if command -v docker &> /dev/null; then
     alias dcd='docker compose down'
 fi
 
-# Docker shortcuts (if git is installed)
-if command -v docker &> /dev/null; then
+# Git shortcuts
+if command -v git &> /dev/null; then
     alias g='git'
     alias gr='git rebase "$(git merge-base main HEAD)" --interactive --autosquash --autostash'
 fi

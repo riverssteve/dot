@@ -1,0 +1,11 @@
+theme = TokyoNight
+font-size = 14
+font-family = "Cascadia Code NF"
+{{ if eq .chezmoi.os "darwin" -}}
+macos-option-as-alt = left
+{{ end -}}
+cursor-style = block
+keybind = shift+enter=text:\n
+font-feature = -calt, -liga, -dlig
+keybind = global:F4=toggle_quick_terminal
+quick-terminal-position = bottom

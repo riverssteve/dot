@@ -1,3 +1,21 @@
+# Set paths before initializing tools installed by Homebrew or mise.
+if test -x /opt/homebrew/bin/brew
+    /opt/homebrew/bin/brew shellenv | source
+else if test -x /home/linuxbrew/.linuxbrew/bin/brew
+    /home/linuxbrew/.linuxbrew/bin/brew shellenv | source
+else if test -x /usr/local/bin/brew
+    /usr/local/bin/brew shellenv | source
+end
+
+fish_add_path ~/.local/bin ~/.cargo/bin ~/.local/share/mise/shims
+
+{{ if eq .chezmoi.os "darwin" -}}
+if command -q brew
+    set -l brew_prefix (brew --prefix)
+    fish_add_path $brew_prefix/opt/coreutils/libexec/gnubin $brew_prefix/opt/fzf/bin $brew_prefix/opt/binutils/bin
+end
+{{ end -}}
+
 if status is-interactive
     if command -v atuin >/dev/null
         atuin init fish | source
@@ -14,33 +32,24 @@ if status is-interactive
     if command -v zoxide >/dev/null
         zoxide init fish | source
     end
+
+    if command -q mise
+        mise activate fish | source
+    end
+
+    if command -q direnv
+        direnv hook fish | source
+    end
 end
-
-# mise version manager
-if command -v mise >/dev/null
-    mise activate fish | source
-end
-
-# Homebrew
-if test -d /opt/homebrew/
-    /opt/homebrew/bin/brew shellenv | source
-end
-
-# PATH
-fish_add_path ~/.local/bin
-fish_add_path ~/.cargo/bin
-
-{{- if eq .chezmoi.os "darwin" }}
-fish_add_path /opt/homebrew/opt/coreutils/libexec/gnubin
-fish_add_path /opt/homebrew/opt/fzf/bin
-fish_add_path /opt/homebrew/opt/binutils/bin
-{{- end }}
 
 # Environment
 set -gx EDITOR nvim
 set -gx VISUAL nvim
 set -gx PROJECTS "$HOME/code"
-set -U fish_greeting ""
+set -g fish_greeting ""
+if status is-interactive; and isatty stdin
+    set -gx GPG_TTY (tty)
+end
 
 # FZF theme
 set -gx FZF_DEFAULT_OPTS $FZF_DEFAULT_OPTS \

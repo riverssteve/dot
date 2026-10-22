@@ -1,0 +1,256 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Manage git worktrees inside the main checkout.
+# Worktrees go at <repo-root>/.worktrees/<branch>.
+#
+# Usage:
+#   gwt [branch-name]        Create a worktree (fzf picker if no branch given)
+#   gwt rm [worktree-path]   Remove a worktree (fzf picker if no path given)
+#   gwt -l|--list            List active worktrees
+#   gwt -p|--prune           Remove worktrees whose branches are merged into main
+
+SYMLINK_DIRS=(".idea")
+SYMLINK_DIR_CONTENTS=("data")  # symlink each subfolder inside, not the dir itself
+SYMLINK_FILES=(".pre-commit-config.yaml" ".python-version" ".envrc")
+
+repo_root=$(git worktree list --porcelain | sed -n '1s/^worktree //p')
+worktrees_dir="${repo_root}/.worktrees"
+# Read the cached default branch without making a network request.
+main_branch=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null || true)
+main_branch=${main_branch#origin/}
+if [[ -z "$main_branch" ]]; then
+    main_branch=main
+    if ! git show-ref --verify --quiet refs/heads/main && git show-ref --verify --quiet refs/heads/master; then
+        main_branch=master
+    fi
+fi
+
+usage() {
+    cat <<EOF
+Usage:
+  gwt [branch-name]        Create a worktree (fzf picker if no branch given)
+  gwt rm [worktree-path]   Remove a worktree (fzf picker if no path given)
+  gwt -l|--list            List active worktrees
+  gwt -p|--prune           Remove worktrees whose branches are merged
+EOF
+    exit "${1:-0}"
+}
+
+prune_merged() {
+    git fetch --prune
+
+    local merged_branches
+    merged_branches=$(git branch --merged "origin/${main_branch}" --format='%(refname:short)' | grep -v "^${main_branch}$") || true
+
+    if [[ -z "$merged_branches" ]]; then
+        echo "No merged branches found"
+        return
+    fi
+
+    local removed=0
+    while IFS= read -r branch; do
+        dir_name="${branch//\//-}"
+        wt_path="${worktrees_dir}/${dir_name}"
+        if [[ -d "$wt_path" ]]; then
+            echo "Removing worktree for merged branch '${branch}'"
+            close_zellij_tab "$dir_name"
+            git worktree remove "$wt_path"
+            removed=$((removed + 1))
+        fi
+    done <<<"$merged_branches"
+
+    git worktree prune
+
+    if [[ $removed -eq 0 ]]; then
+        echo "No worktrees to remove (no merged branches have worktrees)"
+    else
+        echo "Removed ${removed} worktree(s)"
+    fi
+}
+
+remove_worktree() {
+    local wt_path
+
+    if [[ $# -ge 1 ]]; then
+        wt_path="$1"
+    else
+        # Use fzf to pick from existing worktrees (skip the main one)
+        wt_path=$(git worktree list --porcelain |
+            sed -n 's/^worktree //p' |
+            grep -vxF "$repo_root" |
+            fzf --height 40% --reverse --border --info=inline --prompt="remove worktree> ") || true
+    fi
+
+    if [[ -z "${wt_path:-}" ]]; then
+        echo "No worktree selected" >&2
+        exit 1
+    fi
+
+    # Resolve to absolute path if relative
+    wt_path="$(cd "$wt_path" 2>/dev/null && pwd || echo "$wt_path")"
+
+    echo "Removing worktree at ${wt_path}"
+    close_zellij_tab "$(basename "$wt_path")"
+    if ! git worktree remove "$wt_path" 2>/dev/null; then
+        echo "Worktree has modified or untracked files."
+        read -r -p "Force remove anyway? [y/N] " confirm
+        if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
+            git worktree remove --force "$wt_path"
+        else
+            echo "Aborted"
+            exit 1
+        fi
+    fi
+    git worktree prune
+    echo "Done"
+}
+
+create_worktree() {
+    local branch
+
+    if [[ $# -ge 1 ]]; then
+        branch="$1"
+    else
+        branch=$(git branch --list --format='%(refname:short)' |
+            fzf --height 40% --reverse --border --info=inline --prompt="worktree branch> ") || true
+    fi
+
+    if [[ -z "${branch:-}" ]]; then
+        echo "No branch selected" >&2
+        exit 1
+    fi
+
+    # Sanitise branch name for directory (replace / with -)
+    local dir_name="${branch//\//-}"
+    local wt_path="${worktrees_dir}/${dir_name}"
+
+    if [[ -d "$wt_path" ]]; then
+        echo "Worktree already exists at ${wt_path}"
+        open_zellij_tab "$wt_path"
+        exit 0
+    fi
+
+    mkdir -p "$worktrees_dir"
+    echo "Creating worktree for '${branch}' at ${wt_path}"
+
+    # Check if branch exists locally or as a remote tracking branch
+    if git rev-parse --verify "${branch}" &>/dev/null || git rev-parse --verify "origin/${branch}" &>/dev/null; then
+        git worktree add "$wt_path" "$branch"
+    else
+        git worktree add -b "$branch" "$wt_path"
+    fi
+
+    # Symlink shared directories
+    for dir in "${SYMLINK_DIRS[@]}"; do
+        local src="${repo_root}/${dir}"
+        local dest="${wt_path}/${dir}"
+        if [[ -d "$src" ]] && [[ ! -e "$dest" ]]; then
+            ln -s "$src" "$dest"
+            echo "Symlinked ${dir}/"
+        fi
+    done
+
+    # Symlink contents of shared directories (each subfolder individually)
+    for dir in "${SYMLINK_DIR_CONTENTS[@]}"; do
+        local src="${repo_root}/${dir}"
+        if [[ -d "$src" ]]; then
+            mkdir -p "${wt_path}/${dir}"
+            for item in "$src"/*/; do
+                [[ -d "$item" ]] || continue
+                local name
+                name="$(basename "$item")"
+                local dest="${wt_path}/${dir}/${name}"
+                if [[ ! -e "$dest" ]]; then
+                    ln -s "$item" "$dest"
+                    echo "Symlinked ${dir}/${name}/"
+                fi
+            done
+        fi
+    done
+
+    # Symlink shared files
+    for file in "${SYMLINK_FILES[@]}"; do
+        local src="${repo_root}/${file}"
+        local dest="${wt_path}/${file}"
+        if [[ -f "$src" ]] && [[ ! -e "$dest" ]]; then
+            ln -s "$src" "$dest"
+            echo "Symlinked ${file}"
+        fi
+    done
+
+    # Symlink .claude local files (not the whole dir, worktree may have its own)
+    if [[ -d "${repo_root}/.claude" ]]; then
+        mkdir -p "${wt_path}/.claude"
+        for local_file in "CLAUDE.local.md" "settings.local.json"; do
+            local src="${repo_root}/.claude/${local_file}"
+            local dest="${wt_path}/.claude/${local_file}"
+            if [[ -f "$src" ]] && [[ ! -e "$dest" ]]; then
+                ln -s "$src" "$dest"
+                echo "Symlinked .claude/${local_file}"
+            fi
+        done
+    fi
+
+    # Install dependencies if uv project
+    if [[ -f "${wt_path}/uv.lock" ]]; then
+        echo "Found uv.lock, running uv sync..."
+        (cd "$wt_path" && uv sync)
+    fi
+
+    open_zellij_tab "$wt_path"
+
+    echo ""
+    echo "Ready: cd ${wt_path}"
+}
+
+open_zellij_tab() {
+    local wt_path="$1"
+    local tab_name
+    tab_name="wt:$(basename "$wt_path")"
+
+    if [[ -n "${ZELLIJ:-}" ]]; then
+        echo "Opening zellij tab '${tab_name}'"
+        zellij action new-tab \
+            --layout worktab \
+            --cwd "$wt_path" \
+            --name "$tab_name"
+    fi
+}
+
+close_zellij_tab() {
+    local tab_name="wt:$1"
+
+    if [[ -z "${ZELLIJ:-}" ]]; then
+        return
+    fi
+
+    local tab_id
+    tab_id=$(zellij action list-tabs --json 2>/dev/null | jq -r --arg name "$tab_name" '.[] | select(.name == $name) | .tab_id // empty') || true
+
+    if [[ -n "$tab_id" ]]; then
+        zellij action close-tab --tab-id "$tab_id"
+        echo "Closed zellij tab '${tab_name}'"
+    fi
+}
+
+# --- Main ---
+
+case "${1:-}" in
+-h | --help)
+    usage 0
+    ;;
+-l | --list)
+    git worktree list
+    ;;
+-p | --prune)
+    prune_merged
+    ;;
+rm | remove)
+    shift
+    remove_worktree "$@"
+    ;;
+*)
+    create_worktree "$@"
+    ;;
+esac

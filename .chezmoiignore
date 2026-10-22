@@ -1,21 +1,47 @@
 # Files to ignore across all machines
 README.md
+LICENSE
+docs/
 test.sh
+tests/
+AGENTS.md
+CLAUDE.md
+.github/
+.gitignore
 .git/
 .claude/
 
 # Ignore work-specific files on non-work machines
-{{ if not (lookPath "Caskfile.work") }}
+{{ if not .isWork }}
 .config/fish/conf.d/work_*.fish
+.config/fish/functions/mpl.fish
+{{ end }}
+
+{{ if not (or (eq .chezmoi.os "darwin") (and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora")))) }}
+.local/bin/install-brew-packages
 {{ end }}
 
 # Ignore macOS-specific files on Linux
 {{ if eq .chezmoi.os "linux" }}
 Caskfile
 .config/fish/conf.d/macos_*.fish
+.local/bin/configure-macos
+.docker/cli-plugins/
 {{ end }}
 
 # Ignore Linux-specific files on macOS
 {{ if eq .chezmoi.os "darwin" }}
 .config/fish/conf.d/linux_*.fish
+{{ end }}
+
+{{ if not (and (eq .chezmoi.os "linux") (or (eq .chezmoi.osRelease.id "bazzite") (eq .chezmoi.osRelease.id "fedora"))) }}
+Brewfile
+.local/bin/install-flatpak-packages
+.local/bin/layer-rpm-packages
+.local/share/chezmoi/flatpak-packages.txt
+.local/share/chezmoi/rpm-ostree-packages.txt
+{{ end }}
+
+{{ if not (and (eq .chezmoi.os "linux") (or (hasPrefix "pi-" .chezmoi.hostname) (hasPrefix "raspberry" .chezmoi.hostname))) }}
+.bashrc.d/raspberry_aliases.sh
 {{ end }}

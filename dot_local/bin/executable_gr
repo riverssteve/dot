@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+git rebase "$(git merge-base main HEAD)" --interactive --autosquash --autostash
+
+# vi: ft=sh
