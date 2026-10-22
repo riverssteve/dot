@@ -1,3 +1,7 @@
 function cd --wraps=z --description 'alias cd=z'
-    z $argv
+    if functions -q z
+        z $argv
+    else
+        builtin cd $argv
+    end
 end

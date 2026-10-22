@@ -4,15 +4,16 @@
 
 cask_args appdir: '/Applications'
 
-# Taps
-tap "homebrew/cask"
-tap "homebrew/bundle"
-tap "homebrew/core"
-
 # CLI tools
 brew "bat"
 brew "bash"
+brew "bash-completion@2"
+brew "chezmoi"
+brew "colima"
+brew "coreutils"
 brew "direnv"
+brew "docker"
+brew "docker-compose"
 brew "eza"
 brew "fd"
 brew "fzf"
@@ -21,8 +22,11 @@ brew "gawk"
 brew "gcc"
 brew "gh"
 brew "git"
+brew "git-lfs"
 brew "git-delta"
 brew "jq"
+brew "lazydocker"
+brew "lazygit"
 brew "git-absorb"
 brew "glib"
 brew "mise"
@@ -51,10 +55,12 @@ brew "pinentry-mac"
 # GUI Applications
 cask "discord"
 cask "firefox"
+cask "ghostty"
 cask "jordanbaird-ice"
 cask "karabiner-elements"
 cask "mac-mouse-fix"
 cask "raycast"
 cask "rectangle"
 cask "spotify"
+cask "font-cascadia-code-nf"
 {{- end }}

@@ -1,0 +1,19 @@
+[
+  {
+    "context": "Pane",
+    "bindings": {
+      "{{ if eq .chezmoi.os "darwin" }}alt-cmd{{ else }}alt{{ end }}-left": "pane::GoBack",
+      "{{ if eq .chezmoi.os "darwin" }}alt-cmd{{ else }}alt{{ end }}-right": "pane::GoForward",
+      "ctrl-tab": "pane::ActivateNextItem",
+      "ctrl-shift-tab": "pane::ActivatePreviousItem"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "{{ if eq .chezmoi.os "darwin" }}cmd{{ else }}ctrl{{ end }}-+": "zed::IncreaseBufferFontSize",
+      "{{ if eq .chezmoi.os "darwin" }}cmd{{ else }}ctrl{{ end }}--": "zed::DecreaseBufferFontSize",
+      "{{ if eq .chezmoi.os "darwin" }}cmd{{ else }}ctrl{{ end }}-0": "zed::ResetBufferFontSize"
+    }
+  }
+]

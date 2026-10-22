@@ -1,3 +1,6 @@
 function gco
-    fzf --height=20% --reverse --info=inline | xargs git checkout
+    set -l branch (git branch --format='%(refname:short)' | fzf --height=20% --reverse --info=inline)
+    if test -n "$branch"
+        git checkout "$branch"
+    end
 end

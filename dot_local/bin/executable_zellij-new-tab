@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+open_zellij_tab() {
+    local wt_path="$1"
+    local tab_name="${2:-}"
+    if [[ -z "$tab_name" ]]; then
+        tab_name="$(basename "$wt_path")"
+    fi
+
+    if [[ -z "${ZELLIJ:-}" ]]; then
+        echo "Error: not running inside a zellij session" >&2
+        exit 1
+    fi
+
+    echo "Opening zellij tab '${tab_name}'"
+    zellij action new-tab \
+        --layout worktab \
+        --cwd "$wt_path" \
+        --name "$tab_name"
+}
+
+open_zellij_tab "${1:-$(pwd)}" "${2:-}"

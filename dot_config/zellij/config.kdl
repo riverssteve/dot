@@ -4,6 +4,7 @@ on_force_close "quit"
 keybinds {
     unbind "Alt Left"
     unbind "Alt Right"
+    unbind "Ctrl q"
     normal {
         unbind "Alt f"
         unbind "Ctrl g"
@@ -20,6 +21,7 @@ keybinds {
         bind "Ctrl G" { SwitchToMode "normal"; }
     }
     shared {
+        bind "Ctrl Alt q" { Quit; }
         bind "Alt h" "Alt Left" { MoveFocusOrTab "Left"; }
         bind "Alt l" "Alt Right" { MoveFocusOrTab "Right"; }
         bind "Alt j" "Alt Down" { MoveFocus "Down"; }

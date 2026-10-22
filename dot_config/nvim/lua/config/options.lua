@@ -2,17 +2,12 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
--- Set the virtualenv that neovim uses behind the scenes.
---
---   $ pyenv local 3.12.3
---   $ python -V
---   >>> 3.12.3
---
---   $ pip install pynvim
---
--- And then in neovim run :checkhealth and ensure that the following is selected.
-vim.g.python3_host_prog = "/Users/steve.rivers/.local/share/uv/virtualenvs/neovim/bin/python3"
-vim.g.node_host_prog = "/opt/homebrew/bin/node"
+-- Prefer the optional dedicated pynvim environment when it exists.
+-- Otherwise let Neovim discover its Python and Node providers from PATH.
+local python_host = vim.fn.expand("~/.local/share/uv/virtualenvs/neovim/bin/python3")
+if vim.fn.executable(python_host) == 1 then
+  vim.g.python3_host_prog = python_host
+end
 
 vim.g.lazyvim_python_lsp = "ty"
 

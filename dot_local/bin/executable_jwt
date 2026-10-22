@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+"""Display a JWT's header, payload and signature without verifying it."""
+import base64
+import json
+import sys
+
+try:
+    token = sys.argv[1] if len(sys.argv) > 1 else sys.stdin.read().strip()
+    header, payload, signature = token.split(".")
+    for label, value in [("Header", header), ("Body", payload)]:
+        decoded = base64.urlsafe_b64decode(value + "=" * (-len(value) % 4))
+        print(f"----------- {label} ------------")
+        print(json.dumps(json.loads(decoded), indent=2))
+    print("--------- Signature -----------")
+    print(signature)
+except (ValueError, UnicodeError) as error:
+    print(f"Invalid JWT: {error}", file=sys.stderr)
+    sys.exit(1)

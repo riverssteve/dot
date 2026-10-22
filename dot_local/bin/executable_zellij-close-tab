@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Close a zellij tab by name. If no name is given, uses an fzf picker.
+#
+# Usage:
+#   zellij-close-tab [tab-name]
+
+if [[ -z "${ZELLIJ:-}" ]]; then
+	echo "Error: not running inside a zellij session" >&2
+	exit 1
+fi
+
+if [[ $# -ge 1 ]]; then
+	tab_name="$1"
+else
+	tab_name=$(zellij action list-tabs --json 2>/dev/null |
+		jq -r '.[].name' |
+		fzf --height 40% --reverse --border --info=inline --prompt="close tab> ") || true
+fi
+
+if [[ -z "${tab_name:-}" ]]; then
+	echo "No tab selected" >&2
+	exit 1
+fi
+
+tab_id=$(zellij action list-tabs --json 2>/dev/null |
+	jq -r --arg name "$tab_name" '.[] | select(.name == $name) | .tab_id') || true
+
+if [[ -z "${tab_id:-}" ]]; then
+	echo "No tab found with name '${tab_name}'" >&2
+	exit 1
+fi
+
+zellij action close-tab --tab-id "$tab_id"
+echo "Closed zellij tab '${tab_name}'"

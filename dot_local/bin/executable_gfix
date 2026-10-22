@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+selected_commit=$(git log --oneline origin/main..HEAD | fzf --height 30% --reverse --border --info=inline | cut -d ' ' -f1) || exit 0
+[ -n "$selected_commit" ] || exit 0
+
+git commit --fixup="$selected_commit"
+git rebase "$(git merge-base main HEAD)" --interactive --autosquash --autostash
