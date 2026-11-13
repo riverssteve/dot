@@ -1,10 +1,9 @@
 palette = 'catppuccin_frappe'
-right_format = '$time'
 command_timeout = 5000
 
 [character]
 success_symbol = '[>](bold green)'
-error_symbol =  '[>](bold red)'
+error_symbol = '[>](bold red)'
 
 [aws]
 disabled = true
@@ -137,14 +136,6 @@ format = "[$user]($style)"
 [hostname]
 format = "$ssh_symbol[$hostname](bright-blue) "
 ssh_symbol = "@"
-
-[time]
-disabled = false
-format = '⌚️[ $time ]($style) '
-style = '#7C717F'
-time_format = '%T'
-time_range = '10:00:00-14:00:00'
-utc_time_offset = '+0'
 
 [palettes.catppuccin_frappe]
 base = "#303446"

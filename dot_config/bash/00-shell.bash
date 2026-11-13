@@ -21,6 +21,10 @@ HISTCONTROL=ignoreboth
 HISTSIZE=32768
 HISTFILESIZE="$HISTSIZE"
 
+# Skip GDAL completions: 53 links to one slow script add ~1.5 s to startup
+# (needs bash-completion@2)
+# shellcheck disable=SC2034 # read by bash-completion
+BASH_COMPLETION_COMPAT_IGNORE='gdal*|ogr*|sozip'
 if [ -r /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion
 elif command -v brew >/dev/null 2>&1; then
