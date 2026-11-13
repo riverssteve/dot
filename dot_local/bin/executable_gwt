@@ -121,6 +121,21 @@ create_worktree() {
         exit 1
     fi
 
+    # Reuse this branch's worktree, even if it is outside .worktrees.
+    local existing_wt_path="" entry
+    while IFS= read -r -d '' entry; do
+        case "$entry" in
+        "worktree "*)
+            existing_wt_path="${entry#worktree }"
+            ;;
+        "branch refs/heads/${branch}")
+            echo "Worktree already exists at ${existing_wt_path}"
+            open_zellij_tab "$existing_wt_path"
+            return
+            ;;
+        esac
+    done < <(git worktree list --porcelain -z)
+
     # Sanitise branch name for directory (replace / with -)
     local dir_name="${branch//\//-}"
     local wt_path="${worktrees_dir}/${dir_name}"
@@ -208,6 +223,10 @@ open_zellij_tab() {
     local wt_path="$1"
     local tab_name
     tab_name="wt:$(basename "$wt_path")"
+
+    if [[ -e "${wt_path}/.envrc" ]]; then
+        direnv allow "${wt_path}/.envrc"
+    fi
 
     if [[ -n "${ZELLIJ:-}" ]]; then
         echo "Opening zellij tab '${tab_name}'"

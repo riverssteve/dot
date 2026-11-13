@@ -95,6 +95,7 @@ history_filter = [
   "^adb shell input text ar.*",
   "curl.*https://api.octopus.energy/v1/graphql.*",
   "^__jetbrains_intellij_get_environment.*",
+  ".*API_KEY.*",
 ]
 
 ## prevent commands run with cwd matching any of these regexes from being written
