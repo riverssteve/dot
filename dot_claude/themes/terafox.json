@@ -1,0 +1,12 @@
+{
+  "name": "Terafox Diff",
+  "base": "dark",
+  "overrides": {
+    "diffAdded": "#293e40",
+    "diffRemoved": "#4a3332",
+    "diffAddedDimmed": "#213436",
+    "diffRemovedDimmed": "#352d2e",
+    "diffAddedWord": "#4d6b6b",
+    "diffRemovedWord": "#894341"
+  }
+}
