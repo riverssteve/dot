@@ -1,4 +1,4 @@
-theme "tokyonight_night"
+theme "terafox"
 on_force_close "quit"
 
 keybinds {

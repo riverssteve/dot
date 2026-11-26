@@ -1,0 +1,13 @@
+[theme]
+name = "terafox"
+parent = "default"
+
+[colors]
+AlertInfo = "#fda47f"
+AlertWarn = "#fdb292"
+AlertError = "#e85c51"
+Annotation = "#8eb2af"
+Base = "#e6eaea"
+Guidance = "#a1cdd8"
+Important = "#b97490"
+Title = "#73a3b7"

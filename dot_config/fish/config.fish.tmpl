@@ -51,29 +51,30 @@ if status is-interactive; and isatty stdin
     set -gx GPG_TTY (tty)
 end
 
-# FZF theme
+# Terafox palette for fzf
 set -gx FZF_DEFAULT_OPTS $FZF_DEFAULT_OPTS \
     --highlight-line \
     --info=inline-right \
     --ansi \
     --layout=reverse \
     --border=none \
-    --color=bg+:#283457 \
-    --color=bg:#16161e \
-    --color=border:#27a1b9 \
-    --color=fg:#c0caf5 \
-    --color=gutter:#16161e \
-    --color=header:#ff9e64 \
-    --color=hl+:#2ac3de \
-    --color=hl:#2ac3de \
-    --color=info:#545c7e \
-    --color=marker:#ff007c \
-    --color=pointer:#ff007c \
-    --color=prompt:#2ac3de \
-    --color=query:#c0caf5:regular \
-    --color=scrollbar:#27a1b9 \
-    --color=separator:#ff9e64 \
-    --color=spinner:#ff007c
+    --color=bg+:#293e40 \
+    --color=bg:#152528 \
+    --color=border:#7aa4a1 \
+    --color=fg+:#e6eaea \
+    --color=fg:#e6eaea \
+    --color=gutter:#152528 \
+    --color=header:#fda47f \
+    --color=hl+:#a1cdd8 \
+    --color=hl:#a1cdd8 \
+    --color=info:#8eb2af \
+    --color=marker:#b97490 \
+    --color=pointer:#b97490 \
+    --color=prompt:#a1cdd8 \
+    --color=query:#e6eaea:regular \
+    --color=scrollbar:#7aa4a1 \
+    --color=separator:#fda47f \
+    --color=spinner:#b97490
 
 # Local overrides
 if test -f $HOME/.config/fish/secrets.fish
