@@ -9,7 +9,10 @@ CLAUDE.md
 .github/
 .gitignore
 .git/
-.claude/
+.claude/*
+!.claude/themes/
+.claude/themes/*
+!.claude/themes/terafox.json
 
 # Ignore work-specific files on non-work machines
 {{ if not .isWork }}
