@@ -1,7 +1,14 @@
 return {
   {
     "folke/tokyonight.nvim",
+    enabled = false,
+  },
+  {
+    "EdenEast/nightfox.nvim",
     lazy = true,
-    opts = { style = "night" },
+  },
+  {
+    "LazyVim/LazyVim",
+    opts = { colorscheme = "terafox" },
   },
 }
