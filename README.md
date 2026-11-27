@@ -3,6 +3,23 @@
 Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/) for Debian Linux,
 Bazzite, and macOS (Apple Silicon and Intel).
 
+## Update dotfiles
+
+Run these commands from `~/code/dot`. Replace `PATH` with the file path in your
+home directory, such as `~/.config/zellij/layouts/work.kdl`.
+
+| Where the change is | What to do |
+| --- | --- |
+| A new file in your home directory | Run `chezmoi --source="$PWD" add PATH`. |
+| An edited file that chezmoi already manages | Run `chezmoi --source="$PWD" re-add PATH`. This replaces the repo copy. If the repo file ends in `.tmpl`, edit the template directly instead. |
+| A file you edited in this repo | Skip `add` and `re-add`. Use `chezmoi --source="$PWD" source-path PATH` to find the source file for a managed path. |
+
+Preview the change with `chezmoi --source="$PWD" diff PATH`. To install the
+selected file, run `chezmoi --source="$PWD" apply PATH`.
+
+To save the change in Git, create a branch and review `git status`. Use `git add`
+to stage only the intended repo files. Review `git diff --cached` before you commit.
+
 ## Set up
 
 Install chezmoi and fetch the dotfiles:

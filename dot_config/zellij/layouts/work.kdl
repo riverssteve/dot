@@ -1,0 +1,23 @@
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+        children
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+    }
+    tab name="field-services docker" {
+        pane size="100%" {
+            cwd "~/code/kraken/field-services-testing/"
+            command "/opt/homebrew/bin/fish"
+            args "-lc" "exec direnv exec . lazydocker -p kfa"
+        }
+    }
+    tab name="scratch" {
+        pane split_direction="vertical" {
+            pane
+        }
+    }
+}
