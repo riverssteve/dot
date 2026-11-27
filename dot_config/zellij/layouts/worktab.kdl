@@ -28,7 +28,7 @@ layout {
         }
         pane {
             command "fish"
-            args "-c" "direnv exec . claude"
+            args "-c" "exec direnv exec . fish -c claude"
             name "intern"
         }
     }
